@@ -95,9 +95,8 @@ mysql> SELECT e.EMPNO, e.ENAME, e.SAL, d.DEPTNO, d.DNAME, d.LOC
 
 
 QUESTION 2 : STUDENT table — ROLLNO,NAME,AGE,EXAM,MARKS,GRADE
--- ══════════════════════════════════════════════════════════════════
--- Analysis:
--- PK: (ROLLNO, EXAM) — composite key -- (ROLLNO,EXAM) → MARKS (full dependency) ✅ -- ROLLNO → NAME, AGE (full dependency on part of PK) ✅ for 2NF since single col -- MARKS → GRADE (transitive dependency!) ❌ -- GRADE depends on MARKS (non-key), NOT on (ROLLNO, EXAM) -- Current form: 2NF → Must convert to: 3NF
+
+
 -- STEP 1: Create original STUDENT table (as given in question)
 mysql> CREATE TABLE STUDENT (
 -> ROLLNO INT,
@@ -126,7 +125,7 @@ mysql> SELECT * FROM STUDENT;
 | 2      | Priya | 20  | Maths   | 91    | A+    |
 | 3      | Karan | 22  | Science | 60    | C     |
 +--------+-------+-----+---------+-------+-------+
-4 rows in set (0.00 sec) <-- GRADE depends on MARKS (non-key). Transitive dep! Table is in 2NF only
+4 rows in set (0.00 sec) 
 -- STEP 4: Create 3NF Table 1 — MARKS_GRADE (removes transitive dependency)
 mysql> CREATE TABLE MARKS_GRADE (
 -> MARKS INT PRIMARY KEY,
@@ -178,7 +177,7 @@ mysql> SELECT * FROM STUDENT_3NF;
 | 2      | Priya | 20  | Maths   | 91    |
 | 3      | Karan | 22  | Science | 60    |
 +--------+-------+-----+---------+-------+
-4 rows in set (0.00 sec) <-- Transitive dependency removed. 3NF achieved!
+4 rows in set (0.00 sec) 
 mysql> -- JOIN to verify full result
 mysql> SELECT s.ROLLNO, s.NAME, s.AGE, s.EXAM, s.MARKS, mg.GRADE
 -> FROM STUDENT_3NF s JOIN MARKS_GRADE mg ON s.MARKS = mg.MARKS;
@@ -196,10 +195,8 @@ mysql> SELECT s.ROLLNO, s.NAME, s.AGE, s.EXAM, s.MARKS, mg.GRADE
 
 
 QUESTION 3 : EMPLOYEE — EMPNO,PROJECT_NO,NO_OF_DAYS,CUSTOMERNAME
--- PK: (EMPNO, PROJECT_NO) — composite
--- ══════════════════════════════════════════════════════════════════
--- Analysis:
--- PK: (EMPNO, PROJECT_NO) — composite key -- (EMPNO, PROJECT_NO) → NO_OF_DAYS (full dependency) ✅ -- PROJECT_NO → CUSTOMERNAME (partial dependency!) ❌ -- CUSTOMERNAME depends only on PROJECT_NO, NOT on full composite key -- Current form: 1NF → Must convert to: 2NF
+
+
 -- STEP 1: Create original EMPLOYEE table (as given in question)
 mysql> CREATE TABLE EMP_PROJECT (
 -> EMPNO INT,
@@ -226,7 +223,7 @@ mysql> SELECT * FROM EMP_PROJECT;
 | 102   | 1          | 20         | Infosys      |
 | 103   | 3          | 60         | Wipro        |
 +-------+------------+------------+--------------+
-4 rows in set (0.00 sec) <-- CUSTOMERNAME depends only on PROJECT_NO. Partial dep! Table is in 1NF only
+4 rows in set (0.00 sec)
 -- STEP 4: Create 2NF Table 1 — PROJECT (removes partial dependency)
 mysql> CREATE TABLE PROJECT (
 -> PROJECT_NO INT PRIMARY KEY,
@@ -274,7 +271,7 @@ mysql> SELECT * FROM EMP_PROJECT_2NF;
 | 102   | 1          | 20         |
 | 103   | 3          | 60         |
 +-------+------------+------------+
-4 rows in set (0.00 sec) <-- Partial dependency removed. 2NF achieved!
+4 rows in set (0.00 sec)
 mysql> -- JOIN to verify full result
 mysql> SELECT e.EMPNO, e.PROJECT_NO, e.NO_OF_DAYS, p.CUSTOMERNAME
 -> FROM EMP_PROJECT_2NF e JOIN PROJECT p ON e.PROJECT_NO = p.PROJECT_NO;
